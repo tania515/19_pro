@@ -1,0 +1,21 @@
+     <!DOCTYPE html>
+     <html>
+     <head>
+         <title>Главная страница</title>
+     </head>
+     <body>
+      {% if messages %}
+     <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                {{ message }}
+            </li>
+        {% endfor %}
+    </ul>
+     {% endif %}
+
+         <h1>Добро пожаловать!</h1>
+         <a href="{% url 'shop:register' %}">Зарегистрироваться</a> <br>
+         <a href="{% url 'shop:login' %}">Войти</a> <br>
+     </body>
+     </html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title> Список пользователей </title>
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .post {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .post-title {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .post-date {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .no-posts {
+            color: #888;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>Пользователи</h1>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                {{ message }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+    {% if persons %}
+        {% for person in persons %}
+            <div class="person">
+                <h2 class="person-title">{{person.fio}}</h2>
+                <a href="{% url 'blog:person_detail' person.slug %}">О пользователе</a> <br>
+
+                <div class="person-date">
+                    Зарегистрирован: {{ person.created_at|date:"d.m.Y в H:i" }}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="no-person">Пока нет ни одного пользователя.</p>
+    {% endif %}
+</body>
+<br>
+<br>
+<br>
+<a href="{% url 'blog:home' %}">На главную</a>
+</html>

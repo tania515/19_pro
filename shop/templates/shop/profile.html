@@ -1,0 +1,36 @@
+    <!DOCTYPE html>
+     <html>
+     <head>
+         <title>{{ person.fio }}</title>
+     </head>
+     <body>
+     {% if messages %}
+     <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                {{ message }}
+            </li>
+        {% endfor %}
+    </ul>
+     {% endif %}
+
+         <h1>{{ user.email }}</h1>
+         <p>{{ user.phone_number }}</p>
+         <p>{{ user.address}}</p>
+         <p>{{ user.is_active}}</p>
+
+<h2>Заказы</h2>
+
+     {% if user.orders.all %}
+     {% for order in user.orders.all %}
+        <p>{{ order.order }}</p>
+    {% endfor %}
+{% else %}
+    <p>У пользователя пока нет заказов.</p>
+{% endif %}
+
+      <br> <br>   <a href="{% url 'shop:home' %}">На главную</a>
+     </body>
+     </html>
+
+
