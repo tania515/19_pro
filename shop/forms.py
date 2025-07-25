@@ -1,9 +1,13 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, SetPasswordForm, PasswordResetForm
 from .models import CustomUser
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -51,26 +55,76 @@ class CustomUserLoginForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
         self.fields.pop('username', None)  # Полностью удаляем поле username
 
-    def clean(self):
+    def clean_email(self):
         email = self.cleaned_data.get('email')
-        password = self.cleaned_data.get('password')
+        if not email:
+            raise ValidationError("Email обязателен")
 
-        if email is not None and password:
+        # Проверяем, есть ли пользователь с таким email
+        if not User.objects.filter(email=email).exists():
+            raise ValidationError("Пользователь с таким email не найден")
+
+        return email
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if not password:
+            raise ValidationError("Пароль обязателен")
+        return password
+
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get('email')
+        password = cleaned_data.get('password')
+
+        if email and password:
+            # Пробуем аутентифицировать
             self.user_cache = authenticate(
-                self.request,
+                request=self.request,
                 email=email,
                 password=password
             )
-            if self.user_cache is None:
-                raise forms.ValidationError(
-                    "Неверный email или пароль"
-                )
-            elif not self.user_cache.is_active:
-                raise forms.ValidationError(
-                    "Аккаунт не активирован"
-                )
-        return self.cleaned_data
+
+            # Если аутентификация не удалась
+            if not self.user_cache:
+                # Проверяем существует ли пользователь
+                user_exists = User.objects.filter(email=email).exists()
+
+                if user_exists:
+                    # Если существует, проверяем активность
+                    user = User.objects.get(email=email)
+                    if not user.is_active:
+                        raise ValidationError("Аккаунт не активирован. Пожалуйста, проверьте вашу почту")
+                    else:
+                        raise ValidationError("Неверный пароль")
+                else:
+                    raise ValidationError("Пользователь с таким email не найден")
+
+        return cleaned_data
 
     def get_user(self):
         return self.user_cache
 
+class CustomPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(
+        label="Email",
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Введите ваш email'
+        })
+    )
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email').lower()
+        if not User.objects.filter(email=email).exists():
+            raise ValidationError("Пользователь с таким email не найден")
+        return email
+
+
+class CustomSetPasswordForm(SetPasswordForm):
+    new_password1 = forms.CharField(
+        label="Новый пароль",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    new_password2 = forms.CharField(
+        label="Подтвердите новый пароль",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}))

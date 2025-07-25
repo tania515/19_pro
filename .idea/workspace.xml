@@ -4,7 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68ace9af-a990-4145-9b08-a8ba918e9796" name="Changes" comment="" />
+    <list default="true" id="68ace9af-a990-4145-9b08-a8ba918e9796" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/shop/templates/shop/password_reset.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shop/templates/shop/password_reset_confirm.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shop/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/shop/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shop/templates/shop/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/shop/templates/shop/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shop/templates/shop/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/shop/templates/shop/profile.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shop/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/shop/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shop/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/shop/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/~$БД.docx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/БД.docx" beforeDir="false" afterPath="$PROJECT_DIR$/БД.docx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,16 +26,22 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="2zouEsH5X324VfraNFBl4VMQ4qP" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
     "RunOnceActivity.ShowReadmeOnStart": "true"
   }
 }]]></component>
