@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Редактирование профиля</title>
+</head>
+<body>
+    <h1>Редактирование профиля</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label>Email:</label>
+            <input type="email" name="email" value="{{ user.email }}" required>
+        </div>
+        <div>
+            <label>Телефон:</label>
+            <input type="text" name="phone_number" value="{{ user.phone_number|default:'' }}">
+        </div>
+        <div>
+            <label>Адрес:</label>
+            <textarea name="address">{{ user.address|default:'' }}</textarea>
+        </div>
+        <button type="submit">Сохранить</button>
+    </form>
+    <a href="{% url 'shop:profile' %}">Назад</a>
+</body>
+</html>

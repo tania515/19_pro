@@ -1,5 +1,6 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, SetPasswordForm, PasswordResetForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, SetPasswordForm, PasswordResetForm, \
+    PasswordChangeForm
 from .models import CustomUser
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
@@ -105,26 +106,69 @@ class CustomUserLoginForm(AuthenticationForm):
     def get_user(self):
         return self.user_cache
 
+
 class CustomPasswordResetForm(PasswordResetForm):
     email = forms.EmailField(
         label="Email",
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Введите ваш email'
+            'placeholder': 'Введите ваш email',
+            'autocomplete': 'email'
         })
     )
 
     def clean_email(self):
         email = self.cleaned_data.get('email').lower()
-        if not User.objects.filter(email=email).exists():
-            raise ValidationError("Пользователь с таким email не найден")
+        if not User.objects.filter(email=email, is_active=True).exists():
+            raise ValidationError("Пользователь с таким email не найден или аккаунт не активирован")
         return email
 
 
 class CustomSetPasswordForm(SetPasswordForm):
     new_password1 = forms.CharField(
         label="Новый пароль",
-        widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
     new_password2 = forms.CharField(
-        label="Подтвердите новый пароль",
-        widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+        label="Подтвердите пароль",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'phone_number', 'address']
+        widgets = {
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if CustomUser.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError('Пользователь с таким email уже существует.')
+        return email
+
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(
+        label="Старый пароль",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+    new_password1 = forms.CharField(
+        label="Новый пароль",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+    new_password2 = forms.CharField(
+        label="Подтверждение пароля",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+
+
+class AccountDeleteForm(forms.Form):
+    confirm = forms.BooleanField(
+        label="Я подтверждаю удаление аккаунта",
+        required=True
+    )

@@ -1,9 +1,5 @@
 import os
 from django.db import models
-from django.contrib.auth.hashers import make_password, check_password
-from django.utils.text import slugify
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
@@ -73,39 +69,6 @@ class Product(models.Model):
         if self.image:
             self.image.delete()
         super().delete(*args, **kwargs)
-
-
-'''class Person(models.Model):
-    password = models.CharField(max_length=128)
-    fio = models.CharField(max_length=150)
-    birth_date = models.DateField(null=True, blank=True)
-    email = models.EmailField(max_length=50, unique=True)
-    slug = models.SlugField(unique=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.fio
-
-    def save(self, *args, **kwargs):
-        try:
-            validate_email(self.email)
-        except ValidationError:
-            raise ValidationError("Некорректный формат email")
-        if not self.slug:
-            self.slug = slugify(self.email)
-        super().save(*args, **kwargs)
-
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)  # Хэширование + соль
-
-    def check_password(self, raw_password):
-        return check_password(raw_password, self.password)  # Проверка пароля
-
-    class Meta:
-        ordering = ['-fio']
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
-        db_table = 'db_person' '''
 
 
 class CustomUserManager(BaseUserManager):
@@ -217,8 +180,10 @@ class Feedback(models.Model):
         db_table = 'db_feedback'
 
 
+class AccountDeletion(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    token = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-
-
-
-
+    class Meta:
+        db_table = 'account_deletions'

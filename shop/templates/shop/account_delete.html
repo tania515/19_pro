@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Удалить аккаунт</title>
+</head>
+<body>
+    <h1>Удаление аккаунта</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color: {% if message.tags == 'error' %}red{% else %}green{% endif %}">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <p><strong>Внимание!</strong> Все данные будут удалены безвозвратно.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            <input type="checkbox" name="confirm" required>
+            Я подтверждаю удаление
+        </p>
+        <button type="submit">Удалить аккаунт</button>
+        <a href="{% url 'shop:profile' %}">Отмена</a>
+    </form>
+</body>
+</html>

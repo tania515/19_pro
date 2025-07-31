@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ person.fio }}</title>
+    <title>{{ user.email }} - Личный кабинет</title>
 </head>
 <body>
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
-        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
-            {{ message }}
-        </li>
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
         {% endfor %}
     </ul>
     {% endif %}
 
     <h1>{{ user.email }}</h1>
-    <p>{{ user.phone_number }}</p>
-    <p>{{ user.address}}</p>
-    <p>{{ user.is_active}}</p>
+    <p>Телефон: {{ user.phone_number|default:"Не указан" }}</p>
+    <p>Адрес: {{ user.address|default:"Не указан" }}</p>
 
-    <h2>Заказы</h2>
+
+    <a href="{% url 'shop:edit_profile' %}">Редактировать профиль</a> |
+    <a href="{% url 'shop:change_password' %}">Сменить пароль</a>
+
+<h2>Заказы</h2>
 
     {% if user.orders.all %}
         <ul>
@@ -47,7 +48,17 @@
         <p>У пользователя пока нет заказов.</p>
     {% endif %}
 
-    <br><br>
+    <h2>ВНИМАНИЕ!</h2>
+
+    <a href="{% url 'shop:account_delete' %}" class="btn btn-danger">
+    Удалить аккаунт
+    </a>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
     <a href="{% url 'shop:home' %}">На главную</a>
 </body>
 </html>
