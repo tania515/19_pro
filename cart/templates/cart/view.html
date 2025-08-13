@@ -1,0 +1,57 @@
+<h2>Корзина</h2>
+
+
+{% if cart_items %}
+    <ul>
+    {% for item in cart_items %}
+        <li>
+
+                        Наименование {{ item.item.name }} -
+                        Цена за 1 ед. {{ item.item.price}} -
+                        Количество: {{ item.product_quantity }} -
+                        Цена: {{ item.item_price }}
+
+
+            <a href="{% url 'cart:remove' item.id %}" class="btn btn-sm btn-danger">Удалить</a>
+            <form method="post" action="{% url 'cart:update_quantity' item.id %}" class="d-inline">
+                {% csrf_token %}
+                <input type="number" name="quantity" value="{{ item.product_quantity }}" min="1" class="form-control-sm" style="width: 60px;">
+                <button type="submit" class="btn btn-sm btn-primary">Обновить</button>
+            </form>
+        </li>
+    {% endfor %}
+    </ul>
+    <p><strong>Итого: {{ cart.total }} руб.</strong></p>
+{% else %}
+    <div class="alert alert-info">
+        Ваша корзина пуста. Добавьте товары ниже.
+    </div>
+{% endif %}
+
+<!-- Форма добавления товаров -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h3>Добавить товар в корзину</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{% url 'cart:add' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="product-select" class="form-label">Выберите товар</label>
+                <select class="form-select" id="product-select" name="product_id" required>
+                    <option value="" selected disabled>-- Выберите товар --</option>
+                    {% for product in available_products %}
+                        <option value="{{ product.id }}">{{ product.name }} ({{ product.price }} руб.)</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="quantity" class="form-label">Количество</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1" style="width: 100px;">
+            </div>
+            <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+        </form>
+    </div>
+</div>
+
+<a href="{% url 'shop:home' %}" class="btn btn-secondary mt-3">На главную</a>

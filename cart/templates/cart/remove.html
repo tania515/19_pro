@@ -1,0 +1,18 @@
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Подтверждение удаления</h2>
+        </div>
+        <div class="card-body">
+            <p>Вы уверены, что хотите удалить "{{ item.item.name }}" из корзины?</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Да, удалить</button>
+                <a href="{% url 'cart:view' %}" class="btn btn-secondary">Отмена</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
