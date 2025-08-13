@@ -187,3 +187,4 @@ class AccountDeletion(models.Model):
 
     class Meta:
         db_table = 'account_deletions'
+

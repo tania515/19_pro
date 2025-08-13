@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "shop.apps.ShopConfig"
+    "shop.apps.ShopConfig",
+    "cart.apps.CartConfig"
 ]
 
 MIDDLEWARE = [
@@ -46,6 +47,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'cart.middleware.CartMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'cart.middleware.CartSessionMiddleware',
 ]
 
 ROOT_URLCONF = "myshop.urls"
@@ -120,6 +124,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+default_app_config = 'cart.apps.CartConfig'
+
 AUTH_USER_MODEL = 'shop.CustomUser'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_AGE = 1209600  # 2 недели

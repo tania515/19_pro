@@ -1,11 +1,14 @@
+from django.contrib.sessions.models import Session
 from django.urls import reverse
 from django.shortcuts import render, redirect
-from .models import CustomUser, Order
+from .models import CustomUser, Order, Product
+from cart.models import Cart
 from .forms import CustomUserCreationForm, CustomUserLoginForm, CustomPasswordResetForm, \
     ProfileEditForm, CustomPasswordChangeForm, CustomSetPasswordForm, AccountDeleteForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import login as auth_login, update_session_auth_hash
+from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
@@ -13,6 +16,9 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from .models import AccountDeletion
+from cart.utils import get_or_create_cart
+from cart.models import CartItem
+
 
 User = get_user_model()
 
@@ -96,6 +102,21 @@ def login(request):
     return render(request, 'shop/login.html', {'form': form})
 
 
+def logout(request):
+    if request.user.is_authenticated:
+        # Переносим корзину в сессию перед выходом
+        user_cart = get_or_create_cart(request)
+        if user_cart.items.exists():
+            request.session.create()  # Новая сессия для сохранения корзины
+            session = Session.objects.get(session_key=request.session.session_key)
+            session_cart = Cart.objects.create(session=session)
+            user_cart.merge_with_session(session_cart)
+
+    auth_logout(request)
+    messages.success(request, "Вы успешно вышли. Ваша корзина сохранена.")
+    return redirect('shop:home')
+
+
 def password_reset_request(request):
     if request.method == "POST":
         form = CustomPasswordResetForm(request.POST)
@@ -157,12 +178,33 @@ def profile(request):
 
 
 @login_required
+def logout(request):
+    # Очистка корзины (если требуется)
+    cart = get_or_create_cart(request)
+    cart.items.all().delete()
+
+    auth_logout(request)
+    messages.success(request, "Вы успешно вышли из системы")
+    return redirect('shop:home')
+
+
+@login_required
 def profile(request):
     user = request.user
     orders = Order.objects.filter(owner=user).order_by('-created_at')
+
+    cart = get_or_create_cart(request)
+    cart_items = cart.items.all()
+    final = cart.total
+    available_products = Product.objects.all()  # Товары для добавления в корзину
+
     return render(request, 'shop/profile.html', {
         'user': user,
-        'orders': orders
+        'orders': orders,
+        'cart': cart,
+        'cart_items': cart_items,
+        'available_products': available_products,
+        'total': final
     })
 
 
